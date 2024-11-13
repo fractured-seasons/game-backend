@@ -6,21 +6,45 @@ import com.game.backend.models.Role;
 import com.game.backend.models.User;
 import com.game.backend.repositories.RoleRepository;
 import com.game.backend.repositories.UserRepository;
+import com.game.backend.security.jwt.JwtUtils;
+import com.game.backend.security.request.SignupRequest;
+import com.game.backend.security.response.ApiResponse;
+import com.game.backend.security.response.LoginResponse;
+import com.game.backend.security.response.UserDetailsResponse;
 import com.game.backend.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-    
+    @Autowired
+    JwtUtils jwtUtils;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     @Autowired
     UserRepository userRepository;
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     ModelMapper modelMapper;
@@ -48,4 +72,95 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(user, UserDTO.class);
     }
 
+    @Override
+    public LoginResponse authenticateUser(String username, String password) {
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+
+            return new LoginResponse(userDetails.getUsername(), roles, jwtToken);
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Bad credentials", exception);
+        }
+    }
+
+    @Override
+    public ApiResponse registerUser(SignupRequest signUpRequest) {
+        if (userRepository.existsByUserName(signUpRequest.getUsername())) {
+            return new ApiResponse(false, "Username is already taken!");
+        }
+
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return new ApiResponse(false, "Email is already in use!");
+        }
+
+        User user = new User();
+        user.setUserName(signUpRequest.getUsername());
+        user.setEmail(signUpRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+
+        Set<String> strRoles = signUpRequest.getRole();
+        Role role = getRoleForUser(strRoles);
+
+        user.setRole(role);
+        user.setAccountNonLocked(true);
+        user.setAccountNonExpired(true);
+        user.setCredentialsNonExpired(true);
+        user.setEnabled(true);
+        user.setCredentialsExpiryDate(LocalDate.now().plusYears(1));
+        user.setAccountExpiryDate(LocalDate.now().plusYears(1));
+        user.setTwoFactorEnabled(false);
+        user.setSignUpMethod("email");
+
+        userRepository.save(user);
+
+        return new ApiResponse(true, "User registered successfully!");
+    }
+
+    private Role getRoleForUser(Set<String> strRoles) {
+        Role role;
+        if (strRoles == null || strRoles.isEmpty()) {
+            role = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Role is not found."));
+        } else {
+            String roleStr = strRoles.iterator().next();
+            if (roleStr.equals("admin")) {
+                role = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+                        .orElseThrow(() -> new RuntimeException("Role is not found."));
+            } else {
+                role = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Role is not found."));
+            }
+        }
+        return role;
+    }
+
+    @Override
+    public UserDetailsResponse getUserDetails(String username, Collection<? extends GrantedAuthority> grantedAuthorities) {
+        Optional<User> userOptional = userRepository.findByUserName(username);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            List<String> roles = grantedAuthorities.stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
+
+            UserDetailsResponse response;
+            response = modelMapper.map(user, UserDetailsResponse.class);
+            response.setRoles(roles);
+
+            return response;
+        } else {
+            return null;
+        }
+    }
 }
