@@ -3,11 +3,12 @@ package com.game.backend.security.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -36,9 +37,33 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateTokenFromUsername(UserDetails userDetails) {
+    public String getJwtFromCookies(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("access_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public ResponseCookie generateJwtCookie(String username) {
+        String jwtToken = generateTokenFromUsername(username);
+
+        return ResponseCookie.from("access_token", jwtToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // 7 days
+                .sameSite("Strict")
+                .build();
+    }
+
+
+    public String generateTokenFromUsername(String username) {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(key)
@@ -51,8 +76,6 @@ public class JwtUtils {
                 .build().parseSignedClaims(token)
                 .getPayload().getSubject();
     }
-
-
 
     public boolean validateJwtToken(String authToken) {
         try {

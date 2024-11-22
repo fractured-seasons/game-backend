@@ -10,6 +10,7 @@ import com.game.backend.security.jwt.JwtUtils;
 import com.game.backend.security.request.SignupRequest;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.security.response.LoginResponse;
+import com.game.backend.security.response.LoginResponseJwtHeader;
 import com.game.backend.security.response.UserDetailsResponse;
 import com.game.backend.services.UserService;
 import org.modelmapper.ModelMapper;
@@ -73,24 +74,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public LoginResponseJwtHeader authenticateUserJwtHeader(String username, String password) {
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
+
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+
+            return new LoginResponseJwtHeader(userDetails.getUsername(), roles, jwtToken);
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Bad credentials", exception);
+        }
+    }
+
+    @Override
     public LoginResponse authenticateUser(String username, String password) {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
 
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
-            return new LoginResponse(userDetails.getUsername(), roles, jwtToken);
-
+            return new LoginResponse(userDetails.getUsername(), roles);
         } catch (Exception exception) {
             throw new RuntimeException("Bad credentials", exception);
         }
     }
+
 
     @Override
     public ApiResponse registerUser(SignupRequest signUpRequest) {

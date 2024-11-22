@@ -5,6 +5,7 @@ import com.game.backend.models.User;
 import com.game.backend.security.request.SignupRequest;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.security.response.LoginResponse;
+import com.game.backend.security.response.LoginResponseJwtHeader;
 import com.game.backend.security.response.UserDetailsResponse;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -17,6 +18,8 @@ public interface UserService {
     List<User> getAllUsers();
 
     UserDTO getUserById(Long id);
+
+    LoginResponseJwtHeader authenticateUserJwtHeader(String username, String password);
 
     LoginResponse authenticateUser(String username, String password);
 

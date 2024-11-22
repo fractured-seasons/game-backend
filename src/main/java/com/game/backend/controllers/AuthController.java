@@ -1,5 +1,6 @@
 package com.game.backend.controllers;
 
+import com.game.backend.security.jwt.JwtUtils;
 import com.game.backend.security.request.LoginRequest;
 import com.game.backend.security.request.SignupRequest;
 import com.game.backend.security.response.LoginResponse;
@@ -8,7 +9,9 @@ import com.game.backend.security.response.UserDetailsResponse;
 import com.game.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +23,23 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     @Autowired
     UserService userService;
+    @Autowired
+    JwtUtils jwtUtils;
+
+//    @PostMapping("/public/signin/jwt-header")
+//    public ResponseEntity<?> authenticateUserJwtHeader(@RequestBody LoginRequest loginRequest) {
+//        try {
+//            LoginResponse response = userService.authenticateUser(
+//                    loginRequest.getUsername(),
+//                    loginRequest.getPassword()
+//            );
+//            return ResponseEntity.ok(response);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body("Bad credentials");
+//        }
+//    }
 
     @PostMapping("/public/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -28,13 +48,19 @@ public class AuthController {
                     loginRequest.getUsername(),
                     loginRequest.getPassword()
             );
-            return ResponseEntity.ok(response);
+
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(loginRequest.getUsername());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .body(response);
         } catch (RuntimeException e) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("Bad credentials");
+                    .body(new ApiResponse(false, "Bad credentials"));
         }
     }
+
 
     @PostMapping("/public/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
