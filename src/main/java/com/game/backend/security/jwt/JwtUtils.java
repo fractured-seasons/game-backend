@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtils {
@@ -48,8 +49,8 @@ public class JwtUtils {
         return null;
     }
 
-    public ResponseCookie generateJwtCookie(String username) {
-        String jwtToken = generateTokenFromUsername(username);
+    public ResponseCookie generateJwtCookie(String username, List<String> roles) {
+        String jwtToken = generateTokenFromUsername(username, roles);
 
         return ResponseCookie.from("access_token", jwtToken)
                 .httpOnly(true)
@@ -61,9 +62,10 @@ public class JwtUtils {
     }
 
 
-    public String generateTokenFromUsername(String username) {
+    public String generateTokenFromUsername(String username, List<String> roles) {
         return Jwts.builder()
                 .subject(username)
+                .claim("roles", roles)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(key)
@@ -86,5 +88,24 @@ public class JwtUtils {
         }
         return false;
     }
+
+    public ResponseCookie generateCleanJwtCookie() {
+        return ResponseCookie.from("access_token", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .maxAge(0)
+                .path("/")
+                .build();
+    }
+
+    public List<String> getRolesFromJwtToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith((SecretKey) key)
+                .build().parseSignedClaims(token)
+                .getPayload();
+        return claims.get("roles", List.class);
+    }
+
 }
 

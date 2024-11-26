@@ -2,6 +2,8 @@ package com.game.backend.services;
 
 import com.game.backend.dtos.UserDTO;
 import com.game.backend.models.User;
+import com.game.backend.security.request.ForgotPasswordRequest;
+import com.game.backend.security.request.PasswordResetRequest;
 import com.game.backend.security.request.SignupRequest;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.security.response.LoginResponse;
@@ -24,6 +26,10 @@ public interface UserService {
     LoginResponse authenticateUser(String username, String password);
 
     ApiResponse registerUser(SignupRequest signUpRequest);
+
+    ApiResponse sendPasswordResetEmail(ForgotPasswordRequest request);
+
+    void resetPassword(PasswordResetRequest passwordResetRequest);
 
     UserDetailsResponse getUserDetails(String username, Collection<? extends GrantedAuthority> grantedAuthorities);
 }

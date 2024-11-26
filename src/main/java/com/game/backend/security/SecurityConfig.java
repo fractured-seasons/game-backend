@@ -104,6 +104,21 @@ public class SecurityConfig {
                 admin.setRole(adminRole);
                 userRepository.save(admin);
             }
+
+            if (!userRepository.existsByUserName("dragos")) {
+                User admin = new User("dragos", "sdragos231@gmail.com",
+                        passwordEncoder.encode("adminPass"));
+                admin.setAccountNonLocked(true);
+                admin.setAccountNonExpired(true);
+                admin.setCredentialsNonExpired(true);
+                admin.setEnabled(true);
+                admin.setCredentialsExpiryDate(LocalDate.now().plusYears(1));
+                admin.setAccountExpiryDate(LocalDate.now().plusYears(1));
+                admin.setTwoFactorEnabled(false);
+                admin.setSignUpMethod("email");
+                admin.setRole(adminRole);
+                userRepository.save(admin);
+            }
         };
     }
 

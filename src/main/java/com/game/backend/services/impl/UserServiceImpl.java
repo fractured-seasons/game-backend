@@ -7,14 +7,18 @@ import com.game.backend.models.User;
 import com.game.backend.repositories.RoleRepository;
 import com.game.backend.repositories.UserRepository;
 import com.game.backend.security.jwt.JwtUtils;
+import com.game.backend.security.request.ForgotPasswordRequest;
+import com.game.backend.security.request.PasswordResetRequest;
 import com.game.backend.security.request.SignupRequest;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.security.response.LoginResponse;
 import com.game.backend.security.response.LoginResponseJwtHeader;
 import com.game.backend.security.response.UserDetailsResponse;
+import com.game.backend.security.services.EmailService;
 import com.game.backend.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,10 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +50,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    EmailService emailService;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Override
     public void updateUserRole(Long userId, String roleName) {
@@ -80,11 +87,12 @@ public class UserServiceImpl implements UserService {
                     .authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
 
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
+
+            String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername(), roles);
 
             return new LoginResponseJwtHeader(userDetails.getUsername(), roles, jwtToken);
 
@@ -122,6 +130,35 @@ public class UserServiceImpl implements UserService {
             return new ApiResponse(false, "Email is already in use!");
         }
 
+        if (!signUpRequest.getPassword().equals(signUpRequest.getConfirmPassword())) {
+            return new ApiResponse(false, "Passwords should match.");
+        }
+
+        List<String> validationErrors = new ArrayList<>();
+
+        String password = signUpRequest.getPassword();
+
+        if (password.length() < 8) {
+            validationErrors.add("8 characters");
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            validationErrors.add("one uppercase letter");
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            validationErrors.add("one number");
+        }
+
+        if (!password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+            validationErrors.add("one special character");
+        }
+
+        if (!validationErrors.isEmpty()) {
+            String errorMessage = "Password should contain at least " + String.join(", ", validationErrors);
+            return new ApiResponse(false, errorMessage);
+        }
+
         User user = new User();
         user.setUserName(signUpRequest.getUsername());
         user.setEmail(signUpRequest.getEmail());
@@ -144,6 +181,59 @@ public class UserServiceImpl implements UserService {
 
         return new ApiResponse(true, "User registered successfully!");
     }
+
+    @Override
+    public ApiResponse sendPasswordResetEmail(ForgotPasswordRequest request) {
+        String email = request.getEmail();
+
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User with email " + email + " not found");
+        }
+
+        User user = userOptional.get();
+
+        String resetToken = UUID.randomUUID().toString();
+
+        user.setPasswordResetToken(resetToken);
+        user.setPasswordResetTokenExpiryDate(System.currentTimeMillis() + 3600000);
+        userRepository.save(user);
+
+        String resetPasswordLink = frontendUrl + "reset-password?token=" + resetToken;
+
+        String subject = "Password Reset Request";
+        String body = "To reset your password, click the link below:\n" + resetPasswordLink;
+        emailService.sendEmail(user.getEmail(), subject, body);
+
+        return new ApiResponse(true, "Password reset link has been sent to your email.");
+    }
+
+    public void resetPassword(PasswordResetRequest passwordResetRequest) {
+        Optional<User> userOptional = userRepository.findByPasswordResetToken(passwordResetRequest.getToken());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("Invalid or expired reset token");
+        }
+
+        User user = userOptional.get();
+
+        if (System.currentTimeMillis() > user.getPasswordResetTokenExpiryDate()) {
+            throw new RuntimeException("Reset token has expired");
+        }
+
+        if (!passwordResetRequest.getNewPassword().equals(passwordResetRequest.getConfirmNewPassword())) {
+            throw new RuntimeException("New password and confirmation password do not match");
+        }
+
+        if (passwordEncoder.matches(passwordResetRequest.getNewPassword(), user.getPassword())) {
+            throw new RuntimeException("New password cannot be the same as the current password");
+        }
+
+        user.setPassword(passwordEncoder.encode(passwordResetRequest.getNewPassword()));
+        user.setPasswordResetToken(null);
+        user.setPasswordResetTokenExpiryDate(null);
+        userRepository.save(user);
+    }
+
 
     private Role getRoleForUser(Set<String> strRoles) {
         Role role;
