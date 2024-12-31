@@ -22,7 +22,7 @@ public interface UserService {
 
     UserDTO getUserById(Long id);
 
-    LoginResponseJwtHeader authenticateUserJwtHeader(String username, String password);
+    LoginResponseJwtHeader authenticateUserJwtHeader(String username, String email, String password);
 
     LoginResponse authenticateUser(String username, String password);
 

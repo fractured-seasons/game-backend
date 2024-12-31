@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponseJwtHeader authenticateUserJwtHeader(String username, String password) {
+    public LoginResponseJwtHeader authenticateUserJwtHeader(String username, String email, String password) {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
-            String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername(), roles);
+            String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername(), email, roles);
 
             return new LoginResponseJwtHeader(userDetails.getUsername(), roles, jwtToken);
 

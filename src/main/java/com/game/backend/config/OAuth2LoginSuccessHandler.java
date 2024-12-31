@@ -157,7 +157,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername(), userRoles);
+        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername(), email, userRoles);
 
         // Redirect to the frontend with the JWT token
         String targetUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/redirect")
