@@ -83,6 +83,17 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
             userService.findByEmail(email)
                     .ifPresentOrElse(user -> {
+                        if (!user.getSignUpMethod().equalsIgnoreCase(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId())) {
+                            try {
+                                response.sendRedirect(UriComponentsBuilder.fromUriString(frontendUrl + "/oauth2/redirect")
+                                        .queryParam("error", "This email is already registered using a different sign-up method.")
+                                        .build().toUriString());
+                            } catch (IOException e) {
+                                throw new RuntimeException("Redirection failed", e);
+                            }
+                            return;
+                        }
+
                         DefaultOAuth2User oauthUser = new DefaultOAuth2User(
                                 List.of(new SimpleGrantedAuthority(user.getRole().getRoleName().name())),
                                 attributes,
