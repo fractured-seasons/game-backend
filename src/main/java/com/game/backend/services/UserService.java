@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     void updateUserRole(Long userId, String roleName);
@@ -32,4 +33,8 @@ public interface UserService {
     void resetPassword(PasswordResetRequest passwordResetRequest);
 
     UserDetailsResponse getUserDetails(String username, Collection<? extends GrantedAuthority> grantedAuthorities);
+
+    Optional<User> findByEmail(String email);
+
+    void registerUserOauth2(User user);
 }

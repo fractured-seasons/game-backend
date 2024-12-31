@@ -273,4 +273,24 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public void registerUserOauth2(User user) {
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("User with email " + user.getEmail() + " already exists");
+        }
+
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        userRepository.save(user);
+        userRepository.flush();
+    }
 }
