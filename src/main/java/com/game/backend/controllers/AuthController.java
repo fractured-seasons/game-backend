@@ -1,10 +1,7 @@
 package com.game.backend.controllers;
 
 import com.game.backend.security.jwt.JwtUtils;
-import com.game.backend.security.request.LoginRequest;
-import com.game.backend.security.request.ForgotPasswordRequest;
-import com.game.backend.security.request.PasswordResetRequest;
-import com.game.backend.security.request.SignupRequest;
+import com.game.backend.security.request.*;
 import com.game.backend.security.response.LoginResponse;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.security.response.UserDetailsResponse;
@@ -98,6 +95,28 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/user/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        try {
+            userService.changePassword(changePasswordRequest);
+            return ResponseEntity.ok(new ApiResponse(true, "Password has been successfully changed"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/user/update")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateRequest updateRequest,
+                                        @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String currentUsername = userDetails.getUsername();
+            ApiResponse response = userService.updateUserDetails(currentUsername, updateRequest);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
 
     @GetMapping("/user")
     public ResponseEntity<?> getUserDetails(@AuthenticationPrincipal UserDetails userDetails) {
@@ -109,6 +128,58 @@ public class AuthController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/user/deactivate")
+    public ResponseEntity<?> deactivateAccount(HttpServletRequest request) {
+        String jwtToken = jwtUtils.getJwtFromCookies(request);
+        if (jwtToken != null && jwtUtils.validateJwtToken(jwtToken)) {
+            String username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+
+            boolean isDeactivated = userService.deactivateAccount(username);
+
+            if (isDeactivated) {
+                return ResponseEntity.ok(new ApiResponse(true, "Account deactivated successfully."));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Failed to deactivate account."));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized"));
+    }
+
+    @PostMapping("/user/activate")
+    public ResponseEntity<?> activateAccount(HttpServletRequest request) {
+        String jwtToken = jwtUtils.getJwtFromCookies(request);
+        if (jwtToken != null && jwtUtils.validateJwtToken(jwtToken)) {
+            String username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+
+            boolean isDeactivated = userService.activateAccount(username);
+
+            if (isDeactivated) {
+                return ResponseEntity.ok(new ApiResponse(true, "Account activated successfully."));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Failed to activate account."));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized"));
+    }
+
+    @PostMapping("/user/delete")
+    public ResponseEntity<?> deleteAccount(HttpServletRequest request) {
+        String jwtToken = jwtUtils.getJwtFromCookies(request);
+        if (jwtToken != null && jwtUtils.validateJwtToken(jwtToken)) {
+            String username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+
+            boolean isDeleted = userService.deleteAccount(username);
+
+            if (isDeleted) {
+                return ResponseEntity.ok(new ApiResponse(true, "Account deleted successfully."));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Failed to delete account."));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized"));
+    }
+
 
     @GetMapping("/username")
     public String currentUserName(@AuthenticationPrincipal UserDetails userDetails) {
@@ -133,6 +204,39 @@ public class AuthController {
 
             LoginResponse checkAuthResponse = new LoginResponse(username, roles);
             return ResponseEntity.ok(checkAuthResponse);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized"));
+    }
+
+    @PostMapping("/public/refresh-token/username")
+    public ResponseEntity<?> refreshTokenUsername(HttpServletRequest request) {
+        String jwtToken = jwtUtils.getJwtFromCookies(request);
+        if (jwtToken != null && jwtUtils.validateJwtToken(jwtToken)) {
+            String email = jwtUtils.getEmailFromJwtToken(jwtToken);
+            List<String> roles = jwtUtils.getRolesFromJwtToken(jwtToken);
+
+            String username = userService.getUsername(email);
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(username, roles);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .body(new ApiResponse(true, "Token refreshed successfully."));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized"));
+    }
+
+    @PostMapping("/public/refresh-token/email")
+    public ResponseEntity<?> refreshTokenEmail(HttpServletRequest request) {
+        String jwtToken = jwtUtils.getJwtFromCookies(request);
+        if (jwtToken != null && jwtUtils.validateJwtToken(jwtToken)) {
+            String username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+            List<String> roles = jwtUtils.getRolesFromJwtToken(jwtToken);
+
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(username, roles);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .body(new ApiResponse(true, "Token refreshed successfully."));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized"));
     }
