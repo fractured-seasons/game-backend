@@ -50,4 +50,6 @@ public interface UserService {
     boolean activateAccount(String username);
 
     void editUserDetails(Long id, UserEditRequest userEditRequest);
+
+    void deleteUserById(Long id);
 }

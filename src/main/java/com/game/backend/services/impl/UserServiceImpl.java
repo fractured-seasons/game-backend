@@ -438,4 +438,11 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
+    public void deleteUserById(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("User not found with ID: " + id);
+        }
+        userRepository.deleteById(id);
+    }
 }
