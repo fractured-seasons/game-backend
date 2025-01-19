@@ -1,3 +1,11 @@
+CREATE DATABASE game;
+
+\c game;
+
+CREATE SCHEMA game_schema;
+
+SET search_path TO game_schema;
+
 CREATE TABLE users (
                        username VARCHAR(50) NOT NULL PRIMARY KEY,
                        password VARCHAR(100) NOT NULL,

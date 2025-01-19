@@ -57,6 +57,9 @@ public class User{
     private boolean isTwoFactorEnabled = false;
     private String signUpMethod;
 
+    private String passwordResetToken;
+    private Long passwordResetTokenExpiryDate;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "role_id", referencedColumnName = "role_id")
     @JsonBackReference
