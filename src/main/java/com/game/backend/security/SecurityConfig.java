@@ -84,6 +84,15 @@ public class SecurityConfig {
             Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
                     .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_USER)));
 
+            Role wikiContributorRole = roleRepository.findByRoleName(AppRole.ROLE_WIKI_CONTRIBUTOR)
+                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_WIKI_CONTRIBUTOR)));
+
+            Role supportRole = roleRepository.findByRoleName(AppRole.ROLE_SUPPORT)
+                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_SUPPORT)));
+
+            Role moderatorRole = roleRepository.findByRoleName(AppRole.ROLE_MODERATOR)
+                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_MODERATOR)));
+
             Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
                     .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_ADMIN)));
 
@@ -114,6 +123,7 @@ public class SecurityConfig {
                 admin.setTwoFactorEnabled(false);
                 admin.setSignUpMethod("email");
                 admin.setRole(adminRole);
+                admin.setStaff(true);
                 userRepository.save(admin);
             }
 
@@ -129,6 +139,7 @@ public class SecurityConfig {
                 admin.setTwoFactorEnabled(false);
                 admin.setSignUpMethod("email");
                 admin.setRole(adminRole);
+                admin.setStaff(true);
                 userRepository.save(admin);
             }
         };

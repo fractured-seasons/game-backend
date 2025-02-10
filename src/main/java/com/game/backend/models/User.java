@@ -66,6 +66,9 @@ public class User{
     @ToString.Exclude
     private Role role;
 
+    @Column(nullable = false)
+    private boolean staff = false;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdDate;

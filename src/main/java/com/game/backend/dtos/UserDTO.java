@@ -23,6 +23,7 @@ public class UserDTO {
     private String twoFactorSecret;
     private boolean isTwoFactorEnabled;
     private String signUpMethod;
+    private boolean staff;
     private Role role;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
