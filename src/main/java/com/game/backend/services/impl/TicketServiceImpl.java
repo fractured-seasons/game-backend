@@ -2,7 +2,9 @@ package com.game.backend.services.impl;
 
 import com.game.backend.dtos.TicketSummaryDTO;
 import com.game.backend.models.Ticket;
+import com.game.backend.models.TicketComment;
 import com.game.backend.models.User;
+import com.game.backend.repositories.TicketCommentRepository;
 import com.game.backend.repositories.TicketRepository;
 import com.game.backend.repositories.UserRepository;
 import com.game.backend.services.TicketService;
@@ -23,11 +25,19 @@ public class TicketServiceImpl implements TicketService {
     private TicketRepository ticketRepository;
 
     @Autowired
+    private TicketCommentRepository ticketCommentRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     public Ticket createTicket(Ticket ticket, String username) {
         User user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Your account is deactivated");
+        }
+
         ticket.setCreatedBy(user);
         return ticketRepository.save(ticket);
     }
@@ -58,6 +68,8 @@ public class TicketServiceImpl implements TicketService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
+        User currentUser = userRepository.findByUserName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!Objects.equals(ticket.getCreatedBy().getUserName(), currentUsername) && !isAdmin) {
             throw new RuntimeException("Unauthorized to update ticket status");
@@ -74,6 +86,14 @@ public class TicketServiceImpl implements TicketService {
         if (ticket.getStatus() == status) {
             throw new RuntimeException("You can't put same status");
         }
+
+        TicketComment ticketComment = new TicketComment();
+        ticketComment.setText(status ? "Ticket reopened" : "Ticket marked as closed");
+        ticketComment.setPostedBy(currentUser);
+        ticketComment.setCreatedByAdmin(isAdmin);
+        ticketComment.setTicket(ticket);
+
+        ticketCommentRepository.save(ticketComment);
 
         ticket.setStatus(status);
         return  ticketRepository.save(ticket);

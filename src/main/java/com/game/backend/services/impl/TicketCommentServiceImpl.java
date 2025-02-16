@@ -32,6 +32,10 @@ public class TicketCommentServiceImpl implements TicketCommentService {
         User user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Your account is deactivated");
+        }
+
         if (!isAdmin && !Objects.equals(ticket.getCreatedBy().getUserName(), username)) {
             throw new RuntimeException("Unauthorized to comment on this ticket");
         }
