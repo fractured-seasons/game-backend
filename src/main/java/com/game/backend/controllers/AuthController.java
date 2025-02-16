@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -202,7 +203,11 @@ public class AuthController {
             String username = jwtUtils.getUserNameFromJwtToken(jwtToken);
             List<String> roles = jwtUtils.getRolesFromJwtToken(jwtToken);
 
-            LoginResponse checkAuthResponse = new LoginResponse(username, roles);
+            List<String> staffRoles = Arrays.asList("ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_SUPPORT");
+
+            boolean isStaff = roles.stream().anyMatch(staffRoles::contains);
+
+            LoginResponse checkAuthResponse = new LoginResponse(username, roles, isStaff);
             return ResponseEntity.ok(checkAuthResponse);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(false, "Unauthorized"));

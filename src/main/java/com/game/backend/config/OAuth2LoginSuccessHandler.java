@@ -49,10 +49,12 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     String idAttributeKey;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+            throws ServletException, IOException {
         OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
 
-        if ("github".equals(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId()) || "google".equals(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId())) {
+        if ("github".equals(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId())
+                || "google".equals(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId())) {
             DefaultOAuth2User principal = (DefaultOAuth2User) authentication.getPrincipal();
             Map<String, Object> attributes = principal.getAttributes();
 

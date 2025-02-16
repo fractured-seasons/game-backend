@@ -62,10 +62,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserRole(Long userId, String roleName) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
         AppRole appRole = AppRole.valueOf(roleName);
+
         Role role = roleRepository.findByRoleName(appRole)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.setRole(role);
+
+        if (appRole != AppRole.ROLE_USER) {
+            user.setStaff(true);
+        }
+
         userRepository.save(user);
     }
 
@@ -115,7 +122,11 @@ public class UserServiceImpl implements UserService {
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
-            return new LoginResponse(userDetails.getUsername(), roles);
+            List<String> staffRoles = Arrays.asList("ROLE_ADMIN", "ROLE_MODERATOR", "ROLE_SUPPORT");
+
+            boolean isStaff = roles.stream().anyMatch(staffRoles::contains);
+
+            return new LoginResponse(userDetails.getUsername(), roles, isStaff);
         } catch (Exception exception) {
             throw new RuntimeException("Bad credentials", exception);
         }
@@ -156,6 +167,7 @@ public class UserServiceImpl implements UserService {
         Role role = getRoleForUser(strRoles);
 
         user.setRole(role);
+        user.setStaff(false);
         user.setAccountNonLocked(true);
         user.setAccountNonExpired(true);
         user.setCredentialsNonExpired(true);

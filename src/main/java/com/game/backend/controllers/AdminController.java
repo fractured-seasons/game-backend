@@ -36,6 +36,16 @@ public class AdminController {
         return ResponseEntity.ok("User role updated");
     }
 
+    @PutMapping("/deactivate")
+    public ResponseEntity<String> deactivateUser(@RequestParam String username) {
+        try {
+            userService.deactivateAccount(username);
+            return ResponseEntity.ok("User disabled");
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/user/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
