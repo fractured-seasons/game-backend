@@ -1,8 +1,8 @@
 package com.game.backend.services.impl;
 
 import com.game.backend.dtos.TicketSummaryDTO;
-import com.game.backend.models.Ticket;
-import com.game.backend.models.TicketComment;
+import com.game.backend.models.tickets.Ticket;
+import com.game.backend.models.tickets.TicketComment;
 import com.game.backend.models.User;
 import com.game.backend.repositories.TicketCommentRepository;
 import com.game.backend.repositories.TicketRepository;

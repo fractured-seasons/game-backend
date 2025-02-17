@@ -1,6 +1,6 @@
 package com.game.backend.controllers;
 
-import com.game.backend.models.TicketComment;
+import com.game.backend.models.tickets.TicketComment;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.TicketCommentService;
 import org.springframework.beans.factory.annotation.Autowired;

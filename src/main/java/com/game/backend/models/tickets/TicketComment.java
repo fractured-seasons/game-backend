@@ -1,6 +1,7 @@
-package com.game.backend.models;
+package com.game.backend.models.tickets;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.game.backend.models.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

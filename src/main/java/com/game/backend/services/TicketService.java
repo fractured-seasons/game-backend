@@ -1,7 +1,7 @@
 package com.game.backend.services;
 
 import com.game.backend.dtos.TicketSummaryDTO;
-import com.game.backend.models.Ticket;
+import com.game.backend.models.tickets.Ticket;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,6 +1,6 @@
 package com.game.backend.services;
 
-import com.game.backend.models.TicketComment;
+import com.game.backend.models.tickets.TicketComment;
 
 import java.util.List;
 
