@@ -1,9 +1,9 @@
-package com.game.backend.controllers;
+package com.game.backend.controllers.tickets;
 
 import com.game.backend.dtos.TicketSummaryDTO;
 import com.game.backend.models.tickets.Ticket;
 import com.game.backend.security.response.ApiResponse;
-import com.game.backend.services.TicketService;
+import com.game.backend.services.tickets.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

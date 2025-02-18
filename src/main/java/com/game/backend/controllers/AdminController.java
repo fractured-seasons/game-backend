@@ -3,7 +3,7 @@ package com.game.backend.controllers;
 import com.game.backend.dtos.UserDTO;
 import com.game.backend.models.User;
 import com.game.backend.security.request.UserEditRequest;
-import com.game.backend.services.UserService;
+import com.game.backend.services.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

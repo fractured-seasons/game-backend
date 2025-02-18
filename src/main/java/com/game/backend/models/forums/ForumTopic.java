@@ -16,7 +16,7 @@ import java.util.List;
 public class ForumTopic extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "forum_category_id")
+    @Column(name = "forum_topic_id")
     private Long id;
 
     @NotBlank
@@ -33,7 +33,7 @@ public class ForumTopic extends Auditable {
 
     @OneToMany(mappedBy = "forum_category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
-    private List<ForumComment> comments = new ArrayList<>();
+    private List<ForumReply> replies = new ArrayList<>();
 
     private boolean locked;
     private boolean pinned;

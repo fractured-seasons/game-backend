@@ -9,10 +9,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-public class ForumComment extends Auditable {
+public class ForumReply extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "forum_comment_id")
+    @Column(name = "forum_reply_id")
     private Long id;
 
     @NotBlank

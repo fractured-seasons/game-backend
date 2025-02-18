@@ -1,4 +1,4 @@
-package com.game.backend.services;
+package com.game.backend.services.users;
 
 import com.game.backend.dtos.UserDTO;
 import com.game.backend.models.User;

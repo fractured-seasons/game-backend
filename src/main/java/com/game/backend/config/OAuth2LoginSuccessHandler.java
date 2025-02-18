@@ -6,7 +6,7 @@ import com.game.backend.models.User;
 import com.game.backend.repositories.RoleRepository;
 import com.game.backend.security.jwt.JwtUtils;
 import com.game.backend.security.services.UserDetailsImpl;
-import com.game.backend.services.UserService;
+import com.game.backend.services.users.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

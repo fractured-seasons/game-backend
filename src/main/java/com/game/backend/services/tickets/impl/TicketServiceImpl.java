@@ -1,13 +1,13 @@
-package com.game.backend.services.impl;
+package com.game.backend.services.tickets.impl;
 
 import com.game.backend.dtos.TicketSummaryDTO;
 import com.game.backend.models.tickets.Ticket;
 import com.game.backend.models.tickets.TicketComment;
 import com.game.backend.models.User;
-import com.game.backend.repositories.TicketCommentRepository;
-import com.game.backend.repositories.TicketRepository;
+import com.game.backend.repositories.tickets.TicketCommentRepository;
+import com.game.backend.repositories.tickets.TicketRepository;
 import com.game.backend.repositories.UserRepository;
-import com.game.backend.services.TicketService;
+import com.game.backend.services.tickets.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

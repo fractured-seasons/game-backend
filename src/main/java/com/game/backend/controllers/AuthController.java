@@ -5,7 +5,7 @@ import com.game.backend.security.request.*;
 import com.game.backend.security.response.LoginResponse;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.security.response.UserDetailsResponse;
-import com.game.backend.services.UserService;
+import com.game.backend.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

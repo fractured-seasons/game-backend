@@ -1,4 +1,4 @@
-package com.game.backend.services.impl;
+package com.game.backend.services.users.impl;
 
 import com.game.backend.dtos.UserDTO;
 import com.game.backend.models.AppRole;
@@ -13,7 +13,7 @@ import com.game.backend.security.response.LoginResponse;
 import com.game.backend.security.response.LoginResponseJwtHeader;
 import com.game.backend.security.response.UserDetailsResponse;
 import com.game.backend.security.services.EmailService;
-import com.game.backend.services.UserService;
+import com.game.backend.services.users.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

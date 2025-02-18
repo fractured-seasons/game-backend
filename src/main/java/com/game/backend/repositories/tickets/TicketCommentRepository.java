@@ -1,4 +1,4 @@
-package com.game.backend.repositories;
+package com.game.backend.repositories.tickets;
 
 import com.game.backend.models.tickets.TicketComment;
 import org.springframework.data.jpa.repository.JpaRepository;

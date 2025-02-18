@@ -1,4 +1,4 @@
-package com.game.backend.services;
+package com.game.backend.services.tickets;
 
 import com.game.backend.dtos.TicketSummaryDTO;
 import com.game.backend.models.tickets.Ticket;
