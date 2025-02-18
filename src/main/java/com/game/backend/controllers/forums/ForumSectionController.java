@@ -1,5 +1,6 @@
 package com.game.backend.controllers.forums;
 
+import com.game.backend.dtos.SectionUpdateRequest;
 import com.game.backend.models.forums.ForumSection;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumSectionService;
@@ -41,8 +42,8 @@ public class ForumSectionController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> updateSection(@PathVariable Long id, @RequestBody String updatedName) {
-        ForumSection updatedForumSection = forumSectionService.updateForumSection(id, updatedName);
+    public ResponseEntity<?> updateSection(@PathVariable Long id, @RequestBody SectionUpdateRequest request) {
+        ForumSection updatedForumSection = forumSectionService.updateForumSection(id, request.getName());
         return ResponseEntity.ok(updatedForumSection);
     }
 

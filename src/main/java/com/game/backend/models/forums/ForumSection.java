@@ -1,5 +1,6 @@
 package com.game.backend.models.forums;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.game.backend.models.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -21,6 +22,7 @@ public class ForumSection extends Auditable {
     @Column(length = 60, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "forum_section")
+    @OneToMany(mappedBy = "section", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ForumCategory> categories;
 }

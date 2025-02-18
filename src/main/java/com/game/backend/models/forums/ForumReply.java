@@ -20,4 +20,8 @@ public class ForumReply extends Auditable {
     private String content;
 
     private boolean hidden;
+
+    @ManyToOne
+    @JoinColumn(name = "forum_topic_id")
+    private ForumTopic topic;
 }

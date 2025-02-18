@@ -47,7 +47,7 @@ public class ForumSectionServiceImpl implements ForumSectionService {
         ForumSection section = forumSectionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Forum section not found"));
 
-        section.setName(updatedName);
+        section.setName(updatedName.toUpperCase());
         return forumSectionRepository.save(section);
     }
 

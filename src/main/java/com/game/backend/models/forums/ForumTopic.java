@@ -31,7 +31,7 @@ public class ForumTopic extends Auditable {
     @JoinColumn(name = "forum_category_id")
     private ForumCategory category;
 
-    @OneToMany(mappedBy = "forum_category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<ForumReply> replies = new ArrayList<>();
 

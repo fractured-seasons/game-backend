@@ -1,5 +1,6 @@
 package com.game.backend.models.forums;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.game.backend.models.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -24,5 +25,6 @@ public class ForumCategory extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "forum_section_id")
+    @JsonBackReference
     private ForumSection section;
 }
