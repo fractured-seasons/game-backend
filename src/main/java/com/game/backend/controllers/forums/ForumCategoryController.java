@@ -1,5 +1,6 @@
 package com.game.backend.controllers.forums;
 
+import com.game.backend.dtos.CategoryDTO;
 import com.game.backend.models.forums.ForumCategory;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumCategoryService;
@@ -22,33 +23,32 @@ public class ForumCategoryController {
     ForumCategoryService forumCategoryService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createForumCategory(@RequestBody ForumCategory forumCategory, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> createForumCategory(@RequestBody CategoryDTO forumCategory, @AuthenticationPrincipal UserDetails userDetails) {
         ForumCategory createdForumCategory = forumCategoryService.createForumCategory(forumCategory, userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdForumCategory);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<ForumCategory> getSectionById(@PathVariable Long id) {
+    public ResponseEntity<ForumCategory> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(forumCategoryService.getForumCategoryById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<ForumCategory>> getAllSections() {
+    public ResponseEntity<List<ForumCategory>> getAllCategories() {
         List<ForumCategory> forumSections = forumCategoryService.getAllForumCategories();
         return new ResponseEntity<>(forumSections, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> updateSection(@PathVariable Long id, @RequestBody ForumCategory updatedCategory) {
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO updatedCategory) {
         ForumCategory updatedForumSection = forumCategoryService.updateForumCategory(id, updatedCategory);
         return ResponseEntity.ok(updatedForumSection);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<ApiResponse> deleteSection(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
         forumCategoryService.deleteCategory(id);
         return ResponseEntity.ok(new ApiResponse(true, "Forum category deleted successfully"));
     }

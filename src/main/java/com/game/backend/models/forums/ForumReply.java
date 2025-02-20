@@ -1,5 +1,6 @@
 package com.game.backend.models.forums;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.game.backend.models.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -23,5 +24,6 @@ public class ForumReply extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "forum_topic_id")
+    @JsonBackReference
     private ForumTopic topic;
 }
