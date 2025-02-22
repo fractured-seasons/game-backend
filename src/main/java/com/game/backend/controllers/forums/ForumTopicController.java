@@ -1,6 +1,8 @@
 package com.game.backend.controllers.forums;
 
+import com.game.backend.dtos.TopicDTO;
 import com.game.backend.models.forums.ForumTopic;
+import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumTopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,16 +13,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("api/forum/topic")
 public class ForumTopicController {
     @Autowired
     ForumTopicService forumTopicService;
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createForumTopic(@RequestBody TopicDTO topic, @AuthenticationPrincipal UserDetails userDetails) {
+        ForumTopic createdTopic = forumTopicService.createForumTopic(topic, userDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTopic);
+    }
 
     @GetMapping()
     public ResponseEntity<Page<ForumTopic>> getAllTopics(@RequestParam Long categoryId,
@@ -36,5 +41,17 @@ public class ForumTopicController {
     @GetMapping("/{id}")
     public ResponseEntity<ForumTopic> getTopic(@PathVariable Long id) {
         return ResponseEntity.ok(forumTopicService.getForumTopicById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateForumTopic(@PathVariable Long id, @RequestBody TopicDTO topicDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        ForumTopic updatedForumTopic = forumTopicService.updateForumTopic(id, topicDTO, userDetails);
+        return ResponseEntity.ok(updatedForumTopic);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse> deleteForumTopic(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        forumTopicService.deleteForumTopic(id, userDetails);
+        return ResponseEntity.ok(new ApiResponse(true, "Forum topic deleted successfully"));
     }
 }

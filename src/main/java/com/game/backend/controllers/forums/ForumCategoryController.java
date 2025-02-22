@@ -42,8 +42,8 @@ public class ForumCategoryController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO updatedCategory) {
-        ForumCategory updatedForumSection = forumCategoryService.updateForumCategory(id, updatedCategory);
-        return ResponseEntity.ok(updatedForumSection);
+        ForumCategory updatedForumCategory = forumCategoryService.updateForumCategory(id, updatedCategory);
+        return ResponseEntity.ok(updatedForumCategory);
     }
 
     @DeleteMapping("/{id}")
