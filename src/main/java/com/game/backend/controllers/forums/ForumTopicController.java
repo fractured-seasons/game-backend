@@ -28,18 +28,18 @@ public class ForumTopicController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<ForumTopic>> getAllTopics(@RequestParam Long categoryId,
+    public ResponseEntity<Page<TopicDTO>> getAllTopics(@RequestParam Long categoryId,
                                                          @RequestParam(defaultValue = "0") int page,
                                                          @RequestParam(defaultValue = "10") int size,
                                                          @AuthenticationPrincipal UserDetails userDetails) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ForumTopic> topicsPage = forumTopicService.getAllTopics(categoryId, pageable, userDetails);
+        Page<TopicDTO> topicsPage = forumTopicService.getAllTopics(categoryId, pageable, userDetails);
 
         return new ResponseEntity<>(topicsPage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ForumTopic> getTopic(@PathVariable Long id) {
+    public ResponseEntity<TopicDTO> getTopic(@PathVariable Long id) {
         return ResponseEntity.ok(forumTopicService.getForumTopicById(id));
     }
 

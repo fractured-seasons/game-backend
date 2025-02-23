@@ -26,7 +26,7 @@ public class ForumTopicServiceImpl implements ForumTopicService {
     ForumCategoryRepository forumCategoryRepository;
 
     @Override
-    public Page<ForumTopic> getAllTopics(Long categoryId, Pageable pageable, UserDetails userDetails) {
+    public Page<TopicDTO> getAllTopics(Long categoryId, Pageable pageable, UserDetails userDetails) {
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_MODERATOR"));
 
@@ -34,8 +34,8 @@ public class ForumTopicServiceImpl implements ForumTopicService {
     }
 
     @Override
-    public ForumTopic getForumTopicById(Long id) {
-        return forumTopicRepository.findById(id)
+    public TopicDTO getForumTopicById(Long id) {
+        return forumTopicRepository.findTopicDTOById(id)
                 .orElseThrow(() -> new RuntimeException("Forum topic not found"));
     }
 

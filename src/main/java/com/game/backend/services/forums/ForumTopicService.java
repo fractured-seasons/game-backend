@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface ForumTopicService {
-    Page<ForumTopic> getAllTopics(Long categoryId, Pageable pageable, UserDetails userDetails);
+    Page<TopicDTO> getAllTopics(Long categoryId, Pageable pageable, UserDetails userDetails);
 
-    ForumTopic getForumTopicById(Long id);
+    TopicDTO getForumTopicById(Long id);
 
     ForumTopic createForumTopic(TopicDTO topic, UserDetails userDetails);
 

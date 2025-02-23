@@ -1,6 +1,7 @@
 package com.game.backend.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
@@ -15,6 +16,6 @@ public class CategoryDTO {
     @Size(max = 256)
     private String description;
 
-    @NotBlank
+    @NotNull(message = "Section ID is required")
     private Long sectionId;
 }

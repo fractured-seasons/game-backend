@@ -6,30 +6,22 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class TopicDTO {
+public class ReplyDTO {
     private Long id;
 
     @NotBlank
-    @Size(min = 3, max = 60)
-    private String title;
-
-    @NotBlank
-    @Size(min = 3, max = 1024)
+    @Size(min = 3, max = 1024, message = "Reply content must be between 3 and 1024 characters")
     private String content;
 
-    @NotNull(message = "Category ID is required")
-    private Long categoryId;
-
-    private boolean locked;
-    private boolean pinned;
     private boolean hidden;
+
+    @NotNull(message = "Topic ID is required")
+    private Long topicId;
 
     private LocalDateTime lastUpdated;
     private LocalDateTime createdAt;
