@@ -4,6 +4,7 @@ import com.game.backend.dtos.TopicDTO;
 import com.game.backend.models.forums.ForumTopic;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumTopicService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +23,7 @@ public class ForumTopicController {
     ForumTopicService forumTopicService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createForumTopic(@RequestBody TopicDTO topic, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> createForumTopic(@RequestBody @Valid TopicDTO topic, @AuthenticationPrincipal UserDetails userDetails) {
         ForumTopic createdTopic = forumTopicService.createForumTopic(topic, userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTopic);
     }
@@ -44,7 +45,7 @@ public class ForumTopicController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateForumTopic(@PathVariable Long id, @RequestBody TopicDTO topicDTO, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> updateForumTopic(@PathVariable Long id, @RequestBody @Valid TopicDTO topicDTO, @AuthenticationPrincipal UserDetails userDetails) {
         ForumTopic updatedForumTopic = forumTopicService.updateForumTopic(id, topicDTO, userDetails);
         return ResponseEntity.ok(updatedForumTopic);
     }

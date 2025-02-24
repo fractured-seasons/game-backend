@@ -4,6 +4,7 @@ import com.game.backend.dtos.CategoryDTO;
 import com.game.backend.models.forums.ForumCategory;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumCategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ForumCategoryController {
     ForumCategoryService forumCategoryService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createForumCategory(@RequestBody CategoryDTO forumCategory, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> createForumCategory(@RequestBody @Valid CategoryDTO forumCategory, @AuthenticationPrincipal UserDetails userDetails) {
         ForumCategory createdForumCategory = forumCategoryService.createForumCategory(forumCategory, userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdForumCategory);
     }
@@ -41,7 +42,7 @@ public class ForumCategoryController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody CategoryDTO updatedCategory) {
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody @Valid CategoryDTO updatedCategory) {
         ForumCategory updatedForumCategory = forumCategoryService.updateForumCategory(id, updatedCategory);
         return ResponseEntity.ok(updatedForumCategory);
     }

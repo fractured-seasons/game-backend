@@ -17,11 +17,11 @@ public class TopicDTO {
     private Long id;
 
     @NotBlank
-    @Size(min = 3, max = 60)
+    @Size(min = 3, max = 60, message = "Topic title must be between 3 and 60 characters")
     private String title;
 
     @NotBlank
-    @Size(min = 3, max = 1024)
+    @Size(min = 3, max = 1024, message = "Topic content must be between 3 and 1024 characters")
     private String content;
 
     @NotNull(message = "Category ID is required")

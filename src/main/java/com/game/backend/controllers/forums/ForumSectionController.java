@@ -1,9 +1,10 @@
 package com.game.backend.controllers.forums;
 
-import com.game.backend.dtos.SectionUpdateRequest;
+import com.game.backend.dtos.SectionDTO;
 import com.game.backend.models.forums.ForumSection;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumSectionService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class ForumSectionController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> updateSection(@PathVariable Long id, @RequestBody SectionUpdateRequest request) {
+    public ResponseEntity<?> updateSection(@PathVariable Long id, @RequestBody @Valid SectionDTO request) {
         ForumSection updatedForumSection = forumSectionService.updateForumSection(id, request.getName());
         return ResponseEntity.ok(updatedForumSection);
     }

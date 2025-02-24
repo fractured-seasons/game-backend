@@ -125,6 +125,11 @@ public class ForumTopicServiceImpl implements ForumTopicService {
             throw new RuntimeException("Unauthorized to delete this forum topic");
         }
 
+        ForumCategory category = topic.getCategory();
+        category.getTopics().remove(topic);
+
+        forumCategoryRepository.save(category);
+
         forumTopicRepository.deleteById(id);
     }
 }

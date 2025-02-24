@@ -120,6 +120,11 @@ public class ForumReplyServiceImpl implements ForumReplyService {
             throw new RuntimeException("Unauthorized to delete this forum reply");
         }
 
-        forumReplyRepository.deleteById(id);
+        ForumTopic topic = reply.getTopic();
+        topic.getReplies().remove(reply);
+
+        forumTopicRepository.save(topic);
+
+        forumReplyRepository.delete(reply);
     }
 }

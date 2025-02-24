@@ -22,7 +22,7 @@ public class ForumSection extends Auditable {
     @Column(length = 60, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "section", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "section", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ForumCategory> categories;
 }
