@@ -39,20 +39,20 @@ public class ForumTopicController {
         return new ResponseEntity<>(topicsPage, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TopicDTO> getTopic(@PathVariable Long id) {
-        return ResponseEntity.ok(forumTopicService.getForumTopicById(id));
+    @GetMapping("/{topicId}")
+    public ResponseEntity<TopicDTO> getTopic(@PathVariable Long topicId) {
+        return ResponseEntity.ok(forumTopicService.getForumTopicById(topicId));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateForumTopic(@PathVariable Long id, @RequestBody @Valid TopicDTO topicDTO, @AuthenticationPrincipal UserDetails userDetails) {
-        ForumTopic updatedForumTopic = forumTopicService.updateForumTopic(id, topicDTO, userDetails);
+    @PutMapping("/{topicId}")
+    public ResponseEntity<?> updateForumTopic(@PathVariable Long topicId, @RequestBody @Valid TopicDTO topicDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        ForumTopic updatedForumTopic = forumTopicService.updateForumTopic(topicId, topicDTO, userDetails);
         return ResponseEntity.ok(updatedForumTopic);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteForumTopic(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        forumTopicService.deleteForumTopic(id, userDetails);
+    @DeleteMapping("/{topicId}")
+    public ResponseEntity<ApiResponse> deleteForumTopic(@PathVariable Long topicId, @AuthenticationPrincipal UserDetails userDetails) {
+        forumTopicService.deleteForumTopic(topicId, userDetails);
         return ResponseEntity.ok(new ApiResponse(true, "Forum topic deleted successfully"));
     }
 }

@@ -38,9 +38,9 @@ public class TicketCommentController {
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_MODERATOR', 'ROLE_ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteComment(@PathVariable Long id) {
-        commentService.deleteComment(id);
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<ApiResponse> deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
         return ResponseEntity.ok(new ApiResponse(true, "Comment deleted successfully"));
     }
 }

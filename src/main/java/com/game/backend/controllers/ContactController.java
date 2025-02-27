@@ -1,7 +1,7 @@
 package com.game.backend.controllers;
 
 import com.game.backend.models.Contact;
-import com.game.backend.security.services.ContactService;
+import com.game.backend.services.contacts.ContactService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,5 +32,12 @@ public class ContactController {
         Page<Contact> contactsPage = contactService.getAllContacts(pageable);
 
         return new ResponseEntity<>(contactsPage, HttpStatus.OK);
+    }
+
+    @GetMapping("/{contactId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_SUPPORT')")
+    public ResponseEntity<Contact> getContact(@PathVariable Long contactId) {
+        Contact contact = contactService.getContact(contactId);
+        return ResponseEntity.ok(contact);
     }
 }

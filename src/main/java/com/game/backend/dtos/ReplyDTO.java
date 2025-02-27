@@ -1,6 +1,8 @@
 package com.game.backend.dtos;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.game.backend.models.User;
+import com.game.backend.serializers.UserSerializer;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,5 +27,7 @@ public class ReplyDTO {
 
     private LocalDateTime lastUpdated;
     private LocalDateTime createdAt;
+
+    @JsonSerialize(using = UserSerializer.class)
     private User createdBy;
 }

@@ -30,9 +30,9 @@ public class ForumSectionController {
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping("/{id}")
-    public ResponseEntity<ForumSection> getSectionById(@PathVariable Long id) {
-        return ResponseEntity.ok(forumSectionService.getForumSectionById(id));
+    @GetMapping("/{sectionId}")
+    public ResponseEntity<ForumSection> getSectionById(@PathVariable Long sectionId) {
+        return ResponseEntity.ok(forumSectionService.getForumSectionById(sectionId));
     }
 
     @GetMapping
@@ -41,17 +41,17 @@ public class ForumSectionController {
         return new ResponseEntity<>(forumSections, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{sectionId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> updateSection(@PathVariable Long id, @RequestBody @Valid SectionDTO request) {
-        ForumSection updatedForumSection = forumSectionService.updateForumSection(id, request.getName());
+    public ResponseEntity<?> updateSection(@PathVariable Long sectionId, @RequestBody @Valid SectionDTO request) {
+        ForumSection updatedForumSection = forumSectionService.updateForumSection(sectionId, request.getName());
         return ResponseEntity.ok(updatedForumSection);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{sectionId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<ApiResponse> deleteSection(@PathVariable Long id) {
-        forumSectionService.deleteSection(id);
+    public ResponseEntity<ApiResponse> deleteSection(@PathVariable Long sectionId) {
+        forumSectionService.deleteSection(sectionId);
         return ResponseEntity.ok(new ApiResponse(true, "Forum section deleted successfully"));
     }
 }

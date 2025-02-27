@@ -39,15 +39,15 @@ public class ForumReplyController {
         return new ResponseEntity<>(repliesPage, HttpStatus.OK);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<?> updateForumReply(@PathVariable Long id, @RequestBody @Valid ReplyDTO replyDTO, @AuthenticationPrincipal UserDetails userDetails) {
-        ForumReply updatedForumReply = forumReplyService.updateForumReply(id, replyDTO, userDetails);
+    @PutMapping("{topicId}")
+    public ResponseEntity<?> updateForumReply(@PathVariable Long topicId, @RequestBody @Valid ReplyDTO replyDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        ForumReply updatedForumReply = forumReplyService.updateForumReply(topicId, replyDTO, userDetails);
         return ResponseEntity.ok(updatedForumReply);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteForumReply(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        forumReplyService.deleteForumReply(id, userDetails);
+    @DeleteMapping("/{topicId}")
+    public ResponseEntity<ApiResponse> deleteForumReply(@PathVariable Long topicId, @AuthenticationPrincipal UserDetails userDetails) {
+        forumReplyService.deleteForumReply(topicId, userDetails);
         return ResponseEntity.ok(new ApiResponse(true, "Forum reply deleted successfully"));
     }
 }

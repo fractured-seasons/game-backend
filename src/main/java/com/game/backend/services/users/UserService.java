@@ -52,4 +52,6 @@ public interface UserService {
     void editUserDetails(Long id, UserEditRequest userEditRequest);
 
     void deleteUserById(Long id);
+
+    User getUserByUserName(String name);
 }

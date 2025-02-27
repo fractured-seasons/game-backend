@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,6 +31,7 @@ public class AdminController {
     }
 
     @PutMapping("/update-role")
+    @PreAuthorize("@securityService.hasHigherRole(authentication, #userId, #roleName)")
     public ResponseEntity<String> updateUserRole(@RequestParam Long userId, 
                                                  @RequestParam String roleName) {
         userService.updateUserRole(userId, roleName);
@@ -37,6 +39,7 @@ public class AdminController {
     }
 
     @PutMapping("/deactivate")
+    @PreAuthorize("@securityService.hasHigherRole(authentication, #username)")
     public ResponseEntity<String> deactivateUser(@RequestParam String username) {
         try {
             userService.deactivateAccount(username);
@@ -46,25 +49,27 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long userId) {
+        return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
     }
 
-    @PutMapping("/edit-user/{id}")
-    public ResponseEntity<String> editUser(@PathVariable Long id, @RequestBody UserEditRequest userEditRequest) {
+    @PutMapping("/user/edit/{userId}")
+    @PreAuthorize("@securityService.hasHigherRole(authentication, #userId)")
+    public ResponseEntity<String> editUser(@PathVariable Long userId, @RequestBody UserEditRequest userEditRequest) {
         try {
-            userService.editUserDetails(id, userEditRequest);
+            userService.editUserDetails(userId, userEditRequest);
             return ResponseEntity.ok("User updated successfully");
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @DeleteMapping("/delete-user/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/user/delete/{userId}")
+    @PreAuthorize("@securityService.hasHigherRole(authentication, #userId)")
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         try {
-            userService.deleteUserById(id);
+            userService.deleteUserById(userId);
             return ResponseEntity.ok("User deleted successfully");
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

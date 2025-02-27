@@ -29,9 +29,9 @@ public class ForumCategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdForumCategory);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ForumCategory> getCategoryById(@PathVariable Long id) {
-        return ResponseEntity.ok(forumCategoryService.getForumCategoryById(id));
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<ForumCategory> getCategoryById(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(forumCategoryService.getForumCategoryById(categoryId));
     }
 
     @GetMapping
@@ -40,17 +40,17 @@ public class ForumCategoryController {
         return new ResponseEntity<>(forumSections, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{categoryId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody @Valid CategoryDTO updatedCategory) {
-        ForumCategory updatedForumCategory = forumCategoryService.updateForumCategory(id, updatedCategory);
+    public ResponseEntity<?> updateCategory(@PathVariable Long categoryId, @RequestBody @Valid CategoryDTO updatedCategory) {
+        ForumCategory updatedForumCategory = forumCategoryService.updateForumCategory(categoryId, updatedCategory);
         return ResponseEntity.ok(updatedForumCategory);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{categoryId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
-        forumCategoryService.deleteCategory(id);
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long categoryId) {
+        forumCategoryService.deleteCategory(categoryId);
         return ResponseEntity.ok(new ApiResponse(true, "Forum category deleted successfully"));
     }
 }

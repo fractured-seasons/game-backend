@@ -1,5 +1,7 @@
 package com.game.backend.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.game.backend.serializers.UserSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -24,5 +26,6 @@ public class Auditable {
 
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
+    @JsonSerialize(using = UserSerializer.class)
     private User createdBy;
 }

@@ -29,9 +29,9 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTicket);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Ticket> getTicketById(@PathVariable Long id) {
-        return ResponseEntity.ok(ticketService.getTicketById(id));
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<Ticket> getTicketById(@PathVariable Long ticketId) {
+        return ResponseEntity.ok(ticketService.getTicketById(ticketId));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_SUPPORT', 'ROLE_MODERATOR', 'ROLE_ADMIN')")
@@ -56,25 +56,25 @@ public class TicketController {
         return new ResponseEntity<>(ticketPage, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateTicket(@PathVariable Long id, @RequestBody Ticket ticket) {
-        Ticket updatedTicket = ticketService.updateTicket(id, ticket);
+    @PutMapping("/{ticketId}")
+    public ResponseEntity<?> updateTicket(@PathVariable Long ticketId, @RequestBody Ticket ticket) {
+        Ticket updatedTicket = ticketService.updateTicket(ticketId, ticket);
         return ResponseEntity.ok(updatedTicket);
     }
 
-    @PutMapping("/status/{id}")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody boolean status, @AuthenticationPrincipal UserDetails userDetails) {
+    @PutMapping("/status/{ticketId}")
+    public ResponseEntity<?> updateStatus(@PathVariable Long ticketId, @RequestBody boolean status, @AuthenticationPrincipal UserDetails userDetails) {
 
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_MODERATOR") || auth.getAuthority().equals("ROLE_SUPPORT"));
 
-        Ticket updatedTicket = ticketService.updateStatus(id, status, isAdmin);
+        Ticket updatedTicket = ticketService.updateStatus(ticketId, status, isAdmin);
         return ResponseEntity.ok(updatedTicket);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteTicket(@PathVariable Long id) {
-        ticketService.deleteTicket(id);
+    @DeleteMapping("/{ticketId}")
+    public ResponseEntity<ApiResponse> deleteTicket(@PathVariable Long ticketId) {
+        ticketService.deleteTicket(ticketId);
         return ResponseEntity.ok(new ApiResponse(true, "Ticket deleted successfully"));
     }
 }
