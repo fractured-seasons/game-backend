@@ -1,6 +1,6 @@
 package com.game.backend.services.forums;
 
-import com.game.backend.dtos.TopicDTO;
+import com.game.backend.dtos.forum.TopicDTO;
 import com.game.backend.models.forums.ForumTopic;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

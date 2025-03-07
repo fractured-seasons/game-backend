@@ -1,6 +1,6 @@
 package com.game.backend.services.forums;
 
-import com.game.backend.dtos.CategoryDTO;
+import com.game.backend.dtos.forum.CategoryDTO;
 import com.game.backend.models.forums.ForumCategory;
 
 import java.util.List;

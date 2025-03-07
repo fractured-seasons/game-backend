@@ -22,6 +22,8 @@ public class UserDetailsResponse {
     private LocalDate accountExpiryDate;
     private boolean isTwoFactorEnabled;
     private boolean staff;
+    private Integer wikiContributions;
+    private Integer forumPosts;
     private List<String> roles;
 
     public UserDetailsResponse(Long id, String username, String email, boolean accountNonLocked, boolean accountNonExpired,

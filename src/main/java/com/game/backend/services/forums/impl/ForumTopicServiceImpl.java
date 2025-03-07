@@ -1,6 +1,6 @@
 package com.game.backend.services.forums.impl;
 
-import com.game.backend.dtos.TopicDTO;
+import com.game.backend.dtos.forum.TopicDTO;
 import com.game.backend.models.User;
 import com.game.backend.models.forums.ForumCategory;
 import com.game.backend.models.forums.ForumTopic;
@@ -70,6 +70,8 @@ public class ForumTopicServiceImpl implements ForumTopicService {
         newTopic.setCreatedBy(user);
         newTopic.setContent(topic.getContent());
         newTopic.setTitle(topic.getTitle());
+
+        user.setForumPosts(user.getForumPosts() + 1);
 
         return forumTopicRepository.save(newTopic);
     }

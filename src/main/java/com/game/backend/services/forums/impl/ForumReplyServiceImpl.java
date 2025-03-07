@@ -1,6 +1,6 @@
 package com.game.backend.services.forums.impl;
 
-import com.game.backend.dtos.ReplyDTO;
+import com.game.backend.dtos.forum.ReplyDTO;
 import com.game.backend.models.User;
 import com.game.backend.models.forums.ForumReply;
 import com.game.backend.models.forums.ForumTopic;

@@ -1,6 +1,6 @@
 package com.game.backend.controllers.forums;
 
-import com.game.backend.dtos.TopicDTO;
+import com.game.backend.dtos.forum.TopicDTO;
 import com.game.backend.models.forums.ForumTopic;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumTopicService;
@@ -13,10 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("api/forum/topic")
 public class ForumTopicController {
     @Autowired

@@ -1,6 +1,6 @@
 package com.game.backend.controllers.forums;
 
-import com.game.backend.dtos.CategoryDTO;
+import com.game.backend.dtos.forum.CategoryDTO;
 import com.game.backend.models.forums.ForumCategory;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumCategoryService;
@@ -11,12 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("api/forum/category")
 public class ForumCategoryController {
 
@@ -36,8 +35,8 @@ public class ForumCategoryController {
 
     @GetMapping
     public ResponseEntity<List<ForumCategory>> getAllCategories() {
-        List<ForumCategory> forumSections = forumCategoryService.getAllForumCategories();
-        return new ResponseEntity<>(forumSections, HttpStatus.OK);
+        List<ForumCategory> forumCategories = forumCategoryService.getAllForumCategories();
+        return new ResponseEntity<>(forumCategories, HttpStatus.OK);
     }
 
     @PutMapping("/{categoryId}")

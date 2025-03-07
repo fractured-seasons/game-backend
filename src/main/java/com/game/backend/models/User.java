@@ -76,6 +76,20 @@ public class User{
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
+    @Column(name = "wiki_contributions", nullable = false)
+    private Integer wikiContributions = 0;
+
+    @Column(name = "forum_posts", nullable = false)
+    private Integer forumPosts = 0;
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "wiki_article",
+//            joinColumns = @JoinColumn(name = "created_by"),
+//            inverseJoinColumns = @JoinColumn(name = "wiki_article_id")
+//    )
+//    private List<WikiArticle> wikiArticles;
+
     public User(String userName, String email, String password) {
         this.userName = userName;
         this.email = email;
