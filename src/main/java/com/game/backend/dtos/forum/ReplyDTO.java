@@ -1,4 +1,4 @@
-package com.game.backend.dtos;
+package com.game.backend.dtos.forum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.game.backend.models.User;

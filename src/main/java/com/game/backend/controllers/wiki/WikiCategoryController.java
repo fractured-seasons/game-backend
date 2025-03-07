@@ -29,14 +29,21 @@ public class WikiCategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdWikiCategory);
     }
 
-    public
-    @GetMapping("/{categoryId}") ResponseEntity<WikiCategory> getCategoryById(@PathVariable Long categoryId) {
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<WikiCategory> getCategoryById(@PathVariable Long categoryId) {
         return ResponseEntity.ok(wikiCategoryService.getWikiCategoryById(categoryId));
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MODERATOR', 'ROLE_WIKI_CONTRIBUTOR')")
     public ResponseEntity<List<WikiCategory>> getAllCategories() {
-        List<WikiCategory> wikiCategories = wikiCategoryService.getAllForumCategories();
+        List<WikiCategory> wikiCategories = wikiCategoryService.getAllWikiCategories();
+        return new ResponseEntity<>(wikiCategories, HttpStatus.OK);
+    }
+
+    @GetMapping("/approved")
+    public ResponseEntity<List<WikiCategory>> getAllCategoriesWithApprovedArticles() {
+        List<WikiCategory> wikiCategories = wikiCategoryService.getAllWikiCategoriesWithApprovedArticles();
         return new ResponseEntity<>(wikiCategories, HttpStatus.OK);
     }
 

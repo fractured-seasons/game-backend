@@ -1,4 +1,4 @@
-package com.game.backend.dtos;
+package com.game.backend.dtos.forum;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

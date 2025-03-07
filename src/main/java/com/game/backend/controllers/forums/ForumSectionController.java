@@ -1,6 +1,6 @@
 package com.game.backend.controllers.forums;
 
-import com.game.backend.dtos.SectionDTO;
+import com.game.backend.dtos.forum.SectionDTO;
 import com.game.backend.models.forums.ForumSection;
 import com.game.backend.security.response.ApiResponse;
 import com.game.backend.services.forums.ForumSectionService;

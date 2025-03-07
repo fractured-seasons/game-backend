@@ -6,13 +6,15 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 public interface WikiCategoryService {
-    WikiCategory createWikiCategory(@Valid WikiCategory forumCategory, String username);
+    WikiCategory createWikiCategory(@Valid WikiCategory wikiCategory, String username);
 
     WikiCategory getWikiCategoryById(Long categoryId);
 
-    List<WikiCategory> getAllForumCategories();
+    List<WikiCategory> getAllWikiCategoriesWithApprovedArticles();
 
     WikiCategory updateWikiCategory(Long categoryId, @Valid WikiCategory updatedCategory);
 
     void deleteWikiCategory(Long categoryId);
+
+    List<WikiCategory> getAllWikiCategories();
 }
