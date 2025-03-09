@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.List;
+
 public interface ForumTopicService {
     Page<TopicDTO> getAllTopics(Long categoryId, Pageable pageable, UserDetails userDetails);
 
@@ -16,4 +18,5 @@ public interface ForumTopicService {
     ForumTopic updateForumTopic(Long id, TopicDTO topicDTO, UserDetails userDetails);
 
     void deleteForumTopic(Long id, UserDetails userDetails);
+    List<ForumTopic> searchTopics(String keyword);
 }

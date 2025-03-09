@@ -83,7 +83,11 @@ public class WikiArticleServiceImpl implements WikiArticleService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         User contributorUser = article.getCreatedBy();
-        contributorUser.setWikiContributions(contributorUser.getWikiContributions() + 1);
+        if (contributorUser.getWikiContributions() == null) {
+            contributorUser.setWikiContributions(0);
+        } else {
+            contributorUser.setWikiContributions(contributorUser.getWikiContributions() + 1);
+        }
 
         WikiContribution newWikiContribution = new WikiContribution();
         newWikiContribution.setUser(article.getCreatedBy());

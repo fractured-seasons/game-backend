@@ -1,6 +1,6 @@
 package com.game.backend.security;
 
-import com.game.backend.config.OAuth2LoginSuccessHandler;
+import com.game.backend.configs.OAuth2LoginSuccessHandler;
 import com.game.backend.models.AppRole;
 import com.game.backend.models.Role;
 import com.game.backend.models.User;

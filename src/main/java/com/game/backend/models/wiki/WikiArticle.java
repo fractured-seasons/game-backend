@@ -41,17 +41,17 @@ public class WikiArticle extends Auditable {
     @Column(nullable = false)
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "approved_by")
     @JsonSerialize(using = UserSerializer.class)
     private User approvedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rejected_by")
     @JsonSerialize(using = UserSerializer.class)
     private User rejectedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hidden_by")
     @JsonSerialize(using = UserSerializer.class)
     private User hiddenBy;

@@ -7,23 +7,37 @@ import com.game.backend.models.forums.ForumTopic;
 import com.game.backend.repositories.UserRepository;
 import com.game.backend.repositories.forums.ForumCategoryRepository;
 import com.game.backend.repositories.forums.ForumTopicRepository;
+import com.game.backend.search.ForumTopicSearchRepository;
+import com.game.backend.services.forums.ForumTopicIndexingService;
 import com.game.backend.services.forums.ForumTopicService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ForumTopicServiceImpl implements ForumTopicService {
-    @Autowired
-    ForumTopicRepository forumTopicRepository;
+    private final ForumTopicRepository forumTopicRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    ForumCategoryRepository forumCategoryRepository;
+    private final ForumCategoryRepository forumCategoryRepository;
+    private final ForumTopicIndexingService forumTopicIndexingService;
+    private final ForumTopicSearchRepository forumTopicSearchRepository;
+
+    public ForumTopicServiceImpl(final ForumTopicRepository forumTopicRepository,
+                                 final UserRepository userRepository,
+                                 final ForumCategoryRepository forumCategoryRepository,
+                                 final ForumTopicIndexingService forumTopicIndexingService,
+                                 final ForumTopicSearchRepository forumTopicSearchRepository) {
+        this.forumTopicRepository = forumTopicRepository;
+        this.userRepository = userRepository;
+        this.forumCategoryRepository = forumCategoryRepository;
+        this.forumTopicIndexingService = forumTopicIndexingService;
+        this.forumTopicSearchRepository = forumTopicSearchRepository;
+    }
 
     @Override
     public Page<TopicDTO> getAllTopics(Long categoryId, Pageable pageable, UserDetails userDetails) {
@@ -73,6 +87,7 @@ public class ForumTopicServiceImpl implements ForumTopicService {
 
         user.setForumPosts(user.getForumPosts() + 1);
 
+        forumTopicIndexingService.indexForumTopic(newTopic);
         return forumTopicRepository.save(newTopic);
     }
 
@@ -112,6 +127,7 @@ public class ForumTopicServiceImpl implements ForumTopicService {
         topic.setTitle(topicDTO.getTitle());
         topic.setContent(topicDTO.getContent());
 
+        forumTopicIndexingService.indexForumTopic(topic);
         return forumTopicRepository.save(topic);
     }
 
@@ -132,6 +148,12 @@ public class ForumTopicServiceImpl implements ForumTopicService {
 
         forumCategoryRepository.save(category);
 
+        forumTopicIndexingService.removeIndexedTopic(id);
         forumTopicRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ForumTopic> searchTopics(String keyword) {
+        return forumTopicSearchRepository.findByTitleContainingIgnoreCase(keyword);
     }
 }

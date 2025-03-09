@@ -1,4 +1,4 @@
-package com.game.backend.config;
+package com.game.backend.configs;
 
 import com.game.backend.models.AppRole;
 import com.game.backend.models.Role;

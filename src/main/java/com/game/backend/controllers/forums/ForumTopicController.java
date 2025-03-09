@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/forum/topic")
 public class ForumTopicController {
@@ -53,5 +55,10 @@ public class ForumTopicController {
     public ResponseEntity<ApiResponse> deleteForumTopic(@PathVariable Long topicId, @AuthenticationPrincipal UserDetails userDetails) {
         forumTopicService.deleteForumTopic(topicId, userDetails);
         return ResponseEntity.ok(new ApiResponse(true, "Forum topic deleted successfully"));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ForumTopic>> searchTopics(@RequestParam String query) {
+        return ResponseEntity.ok(forumTopicService.searchTopics(query));
     }
 }
