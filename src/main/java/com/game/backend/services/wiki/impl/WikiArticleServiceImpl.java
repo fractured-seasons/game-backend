@@ -18,8 +18,10 @@ import com.game.backend.services.wiki.WikiArticleService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Objects;
@@ -186,6 +188,9 @@ public class WikiArticleServiceImpl implements WikiArticleService {
 
     @Override
     public List<ArticleIndexDTO> searchTopics(String query) {
+        if (query == null || query.trim().length() < 3) {
+            throw new RuntimeException("Search query must be at least 3 characters long");
+        }
         return wikiArticleSearchRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(query, query);
     }
 }

@@ -14,8 +14,10 @@ import com.game.backend.services.forums.ForumTopicIndexingService;
 import com.game.backend.services.forums.ForumTopicService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -161,6 +163,9 @@ public class ForumTopicServiceImpl implements ForumTopicService {
 
     @Override
     public List<TopicIndexDTO> searchTopics(String keyword) {
+        if (keyword == null || keyword.trim().length() < 3) {
+            throw new RuntimeException("Search query must be at least 3 characters long");
+        }
         return forumTopicSearchRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword);
     }
 }
