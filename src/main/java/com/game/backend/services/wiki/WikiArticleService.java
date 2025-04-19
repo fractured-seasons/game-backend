@@ -1,6 +1,7 @@
 package com.game.backend.services.wiki;
 
 import com.game.backend.dtos.wiki.ArticleDTO;
+import com.game.backend.dtos.wiki.ArticleIndexDTO;
 import com.game.backend.dtos.wiki.ArticleResponseDTO;
 import com.game.backend.models.wiki.WikiArticle;
 import jakarta.validation.Valid;
@@ -30,4 +31,6 @@ public interface WikiArticleService {
     WikiArticle getWikiArticleBySlug(String articleSlug);
 
     void toggleArticleVisibility(Long articleId, UserDetails userDetails);
+
+    List<ArticleIndexDTO> searchTopics(String query);
 }

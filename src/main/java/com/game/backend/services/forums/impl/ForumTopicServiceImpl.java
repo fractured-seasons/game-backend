@@ -1,6 +1,8 @@
 package com.game.backend.services.forums.impl;
 
+import com.game.backend.dtos.forum.TopicIndexDTO;
 import com.game.backend.dtos.forum.TopicDTO;
+import com.game.backend.mappers.ForumTopicIndexMapper;
 import com.game.backend.models.User;
 import com.game.backend.models.forums.ForumCategory;
 import com.game.backend.models.forums.ForumTopic;
@@ -26,17 +28,19 @@ public class ForumTopicServiceImpl implements ForumTopicService {
     private final ForumCategoryRepository forumCategoryRepository;
     private final ForumTopicIndexingService forumTopicIndexingService;
     private final ForumTopicSearchRepository forumTopicSearchRepository;
+    private final ForumTopicIndexMapper forumTopicIndexMapper;
 
     public ForumTopicServiceImpl(final ForumTopicRepository forumTopicRepository,
                                  final UserRepository userRepository,
                                  final ForumCategoryRepository forumCategoryRepository,
                                  final ForumTopicIndexingService forumTopicIndexingService,
-                                 final ForumTopicSearchRepository forumTopicSearchRepository) {
+                                 final ForumTopicSearchRepository forumTopicSearchRepository, ForumTopicIndexMapper forumTopicIndexMapper) {
         this.forumTopicRepository = forumTopicRepository;
         this.userRepository = userRepository;
         this.forumCategoryRepository = forumCategoryRepository;
         this.forumTopicIndexingService = forumTopicIndexingService;
         this.forumTopicSearchRepository = forumTopicSearchRepository;
+        this.forumTopicIndexMapper = forumTopicIndexMapper;
     }
 
     @Override
@@ -87,8 +91,11 @@ public class ForumTopicServiceImpl implements ForumTopicService {
 
         user.setForumPosts(user.getForumPosts() + 1);
 
-        forumTopicIndexingService.indexForumTopic(newTopic);
-        return forumTopicRepository.save(newTopic);
+        ForumTopic savedTopic = forumTopicRepository.save(newTopic);
+
+        forumTopicIndexingService.indexForumTopic(savedTopic);
+
+        return savedTopic;
     }
 
     @Override
@@ -153,7 +160,7 @@ public class ForumTopicServiceImpl implements ForumTopicService {
     }
 
     @Override
-    public List<ForumTopic> searchTopics(String keyword) {
-        return forumTopicSearchRepository.findByTitleContainingIgnoreCase(keyword);
+    public List<TopicIndexDTO> searchTopics(String keyword) {
+        return forumTopicSearchRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword);
     }
 }

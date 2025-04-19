@@ -1,5 +1,6 @@
 package com.game.backend.services.forums;
 
+import com.game.backend.dtos.forum.TopicIndexDTO;
 import com.game.backend.dtos.forum.TopicDTO;
 import com.game.backend.models.forums.ForumTopic;
 import org.springframework.data.domain.Page;
@@ -18,5 +19,5 @@ public interface ForumTopicService {
     ForumTopic updateForumTopic(Long id, TopicDTO topicDTO, UserDetails userDetails);
 
     void deleteForumTopic(Long id, UserDetails userDetails);
-    List<ForumTopic> searchTopics(String keyword);
+    List<TopicIndexDTO> searchTopics(String keyword);
 }

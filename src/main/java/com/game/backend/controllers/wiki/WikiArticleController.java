@@ -1,6 +1,7 @@
     package com.game.backend.controllers.wiki;
 
     import com.game.backend.dtos.wiki.ArticleDTO;
+    import com.game.backend.dtos.wiki.ArticleIndexDTO;
     import com.game.backend.dtos.wiki.ArticleResponseDTO;
     import com.game.backend.models.wiki.WikiArticle;
     import com.game.backend.security.response.ApiResponse;
@@ -94,6 +95,19 @@
         public ResponseEntity<ApiResponse> deleteWikiCategoryById(@PathVariable Long articleId) {
             wikiArticleService.deleteWikiArticleById(articleId);
             return ResponseEntity.ok(new ApiResponse(true, "Wiki article deleted successfully"));
+        }
+
+        @GetMapping("/search")
+        public ResponseEntity<List<ArticleIndexDTO>> searchArticles(@RequestParam String query) {
+            System.out.println("[START] Thread search article: " + Thread.currentThread().getName() + " - Article: " + query);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            List<ArticleIndexDTO> articleIndexDTOS = wikiArticleService.searchTopics(query);
+            System.out.println("[END] Thread search article: " + Thread.currentThread().getName() + " - Article: " + query);
+            return ResponseEntity.ok(articleIndexDTOS);
         }
     }
 

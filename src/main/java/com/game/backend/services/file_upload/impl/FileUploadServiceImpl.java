@@ -16,14 +16,9 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     public String uploadImage(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-        // Define the path where the file will be stored
         Path filePath = Paths.get(UPLOAD_DIR + fileName);
-
-        // Write the file bytes to the path
         Files.write(filePath, file.getBytes());
 
-        // Return the relative URL for the uploaded file
         return "/uploads/" + fileName;
     }
 }

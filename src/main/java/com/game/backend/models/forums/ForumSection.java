@@ -4,14 +4,16 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.game.backend.models.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+@Getter
+@Setter
 public class ForumSection extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

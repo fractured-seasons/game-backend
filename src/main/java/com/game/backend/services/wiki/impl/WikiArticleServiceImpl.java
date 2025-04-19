@@ -1,6 +1,7 @@
 package com.game.backend.services.wiki.impl;
 
 import com.game.backend.dtos.wiki.ArticleDTO;
+import com.game.backend.dtos.wiki.ArticleIndexDTO;
 import com.game.backend.dtos.wiki.ArticleResponseDTO;
 import com.game.backend.models.User;
 import com.game.backend.models.wiki.ApprovalStatus;
@@ -11,6 +12,8 @@ import com.game.backend.repositories.UserRepository;
 import com.game.backend.repositories.wiki.WikiArticleRepository;
 import com.game.backend.repositories.wiki.WikiCategoryRepository;
 import com.game.backend.repositories.wiki.WikiContributionRepository;
+import com.game.backend.search.WikiArticleSearchRepository;
+import com.game.backend.services.wiki.WikiArticleIndexingService;
 import com.game.backend.services.wiki.WikiArticleService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -27,15 +30,20 @@ public class WikiArticleServiceImpl implements WikiArticleService {
     private final UserRepository userRepository;
     private final WikiCategoryRepository wikiCategoryRepository;
     private final WikiContributionRepository wikiContributionRepository;
+    private final WikiArticleSearchRepository wikiArticleSearchRepository;
+    private final WikiArticleIndexingService wikiArticleIndexingService;
 
     public WikiArticleServiceImpl(final WikiArticleRepository wikiArticleRepository,
                                   final UserRepository userRepository,
                                   final WikiCategoryRepository wikiCategoryRepository,
-                                  final WikiContributionRepository wikiContributionRepository) {
+                                  final WikiContributionRepository wikiContributionRepository,
+                                  final WikiArticleSearchRepository wikiArticleSearchRepository, WikiArticleIndexingService wikiArticleIndexingService) {
         this.wikiArticleRepository = wikiArticleRepository;
         this.userRepository = userRepository;
         this.wikiCategoryRepository = wikiCategoryRepository;
         this.wikiContributionRepository = wikiContributionRepository;
+        this.wikiArticleSearchRepository = wikiArticleSearchRepository;
+        this.wikiArticleIndexingService = wikiArticleIndexingService;
     }
 
     @Override
@@ -97,6 +105,8 @@ public class WikiArticleServiceImpl implements WikiArticleService {
         article.setApprovalStatus(ApprovalStatus.APPROVED);
         article.setApprovedBy(currentUser);
         wikiArticleRepository.save(article);
+
+        wikiArticleIndexingService.indexWikiArticle(article);
     }
 
     @Override
@@ -137,7 +147,10 @@ public class WikiArticleServiceImpl implements WikiArticleService {
         wikiArticle.setCategory(wikiCategory);
         wikiArticle.setApprovalStatus(ApprovalStatus.PENDING);
 
-        return wikiArticleRepository.save(wikiArticle);
+        WikiArticle savedArticle = wikiArticleRepository.save(wikiArticle);
+        wikiArticleIndexingService.indexWikiArticle(savedArticle);
+
+        return savedArticle;
     }
 
     @Override
@@ -145,6 +158,7 @@ public class WikiArticleServiceImpl implements WikiArticleService {
         WikiArticle article = wikiArticleRepository.findById(articleId)
                 .orElseThrow(() -> new RuntimeException("Article not found"));
 
+        wikiArticleIndexingService.removeIndexedArticle(articleId);
         wikiArticleRepository.delete(article);
     }
 
@@ -168,5 +182,10 @@ public class WikiArticleServiceImpl implements WikiArticleService {
         }
 
         wikiArticleRepository.save(article);
+    }
+
+    @Override
+    public List<ArticleIndexDTO> searchTopics(String query) {
+        return wikiArticleSearchRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(query, query);
     }
 }

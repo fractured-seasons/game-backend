@@ -1,5 +1,6 @@
 package com.game.backend.controllers.forums;
 
+import com.game.backend.dtos.forum.TopicIndexDTO;
 import com.game.backend.dtos.forum.TopicDTO;
 import com.game.backend.models.forums.ForumTopic;
 import com.game.backend.security.response.ApiResponse;
@@ -58,7 +59,15 @@ public class ForumTopicController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ForumTopic>> searchTopics(@RequestParam String query) {
-        return ResponseEntity.ok(forumTopicService.searchTopics(query));
+    public ResponseEntity<List<TopicIndexDTO>> searchTopics(@RequestParam String query) {
+        System.out.println("[START] Thread search topic: " + Thread.currentThread().getName() + " - Topic: " + query);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        List<TopicIndexDTO> topicIndexDTOS = forumTopicService.searchTopics(query);
+        System.out.println("[END] Thread search topic: " + Thread.currentThread().getName() + " - Topic: " + query);
+        return ResponseEntity.ok(topicIndexDTOS);
     }
 }
