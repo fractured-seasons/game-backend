@@ -7,6 +7,8 @@ import com.game.backend.serializers.WikiArticleSerializer;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +25,8 @@ public class WikiContribution {
     @JsonSerialize(using = UserSerializer.class)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "wiki_article_id", nullable = false)
     @JsonSerialize(using = WikiArticleSerializer.class)
     private WikiArticle wikiArticle;

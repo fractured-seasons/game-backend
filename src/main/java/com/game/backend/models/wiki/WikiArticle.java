@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
@@ -84,4 +86,8 @@ public class WikiArticle extends Auditable {
     public void trackOriginalTitle() {
         this.originalTitle = this.title;
     }
+
+//    @OneToMany(mappedBy = "wikiArticle", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<WikiContribution> contributions;
+
 }
