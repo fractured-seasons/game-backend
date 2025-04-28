@@ -28,7 +28,7 @@ public class ForumTopic extends Auditable {
     private String title;
 
     @NotBlank
-    @Column(length = 1024, nullable = false)
+    @Column(length = 2048, nullable = false)
     private String content;
 
     @ManyToOne

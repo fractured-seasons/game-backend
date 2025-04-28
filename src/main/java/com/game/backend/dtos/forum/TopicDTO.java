@@ -23,7 +23,7 @@ public class TopicDTO {
     private String title;
 
     @NotBlank
-    @Size(min = 3, max = 1024, message = "Topic content must be between 3 and 1024 characters")
+    @Size(min = 3, max = 2048, message = "Topic content must be between 3 and 2048 characters")
     private String content;
 
     @NotNull(message = "Category ID is required")

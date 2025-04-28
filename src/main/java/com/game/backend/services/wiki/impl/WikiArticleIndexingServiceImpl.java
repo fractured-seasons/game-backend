@@ -5,7 +5,10 @@ import com.game.backend.mappers.WikiArticleIndexMapper;
 import com.game.backend.models.wiki.WikiArticle;
 import com.game.backend.search.WikiArticleSearchRepository;
 import com.game.backend.services.wiki.WikiArticleIndexingService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class WikiArticleIndexingServiceImpl implements WikiArticleIndexingService {
@@ -18,18 +21,25 @@ public class WikiArticleIndexingServiceImpl implements WikiArticleIndexingServic
         this.wikiArticleIndexMapper = wikiArticleIndexMapper;
     }
 
+    @Async("indexExecutor")
     @Override
-    public void indexWikiArticle(WikiArticle article) {
-        System.out.println("[START] Thread: " + Thread.currentThread().getName() + " - Wiki Article: " + article.getId());
+    public CompletableFuture<Void> indexWikiArticle(WikiArticle article) {
+        System.out.println("[START] " + Thread.currentThread().getName() + " – articol " + article.getId());
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        ArticleIndexDTO articleIndexDTO = wikiArticleIndexMapper.toIndexDTO(article);
-        wikiArticleSearchRepository.save(articleIndexDTO);
-        System.out.println("[END] Thread: " + Thread.currentThread().getName() + " - Wiki Article: " + article.getId());
+        wikiArticleSearchRepository.save(wikiArticleIndexMapper.toIndexDTO(article));
+        System.out.println("[END] " + Thread.currentThread().getName() + " – articol " + article.getId());
+        return CompletableFuture.completedFuture(null);
     }
+
+//    @Override
+//    public void indexWikiArticle(WikiArticle article) {
+//        ArticleIndexDTO articleIndexDTO = wikiArticleIndexMapper.toIndexDTO(article);
+//        wikiArticleSearchRepository.save(articleIndexDTO);
+//    }
 
     @Override
     public void removeIndexedArticle(Long articleId) {
