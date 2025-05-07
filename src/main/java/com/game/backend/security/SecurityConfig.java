@@ -56,6 +56,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/ticket/**").permitAll()
                         .requestMatchers("/api/forum/**").permitAll()
                         .requestMatchers("/api/wiki/**").permitAll()
+                        .requestMatchers("/api/update/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/oauth2/**").permitAll()
                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> {

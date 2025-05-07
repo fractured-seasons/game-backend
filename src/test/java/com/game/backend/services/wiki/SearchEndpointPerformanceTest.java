@@ -51,7 +51,7 @@ public class SearchEndpointPerformanceTest {
                     ", body: "   + resp.getBody());
         });
         long elapsed = System.currentTimeMillis() - start;
-        System.out.println("Search secvenţial: " + elapsed + " ms");
+        System.out.println("Search secvential: " + elapsed + " ms");
     }
 
     @Test
