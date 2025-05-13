@@ -1,6 +1,6 @@
 package com.game.backend.security;
 
-import com.game.backend.config.OAuth2LoginSuccessHandler;
+import com.game.backend.configs.OAuth2LoginSuccessHandler;
 import com.game.backend.models.AppRole;
 import com.game.backend.models.Role;
 import com.game.backend.models.User;
@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,11 +29,11 @@ import java.time.LocalDate;
 
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity(
-//        prePostEnabled = true,
-//        securedEnabled = true,
-//        jsr250Enabled = true
-//)
+@EnableMethodSecurity(
+        prePostEnabled = true,
+        securedEnabled = true,
+        jsr250Enabled = true
+)
 public class SecurityConfig {
     @Autowired
     private AuthEntryPointJwt authEntryPointJwt;
@@ -52,6 +53,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/csrf-token").permitAll()
                 .requestMatchers("/api/auth/public/**").permitAll()
+                        .requestMatchers("/api/ticket/**").permitAll()
+                        .requestMatchers("/api/forum/**").permitAll()
+                        .requestMatchers("/api/wiki/**").permitAll()
+                        .requestMatchers("/api/update/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/oauth2/**").permitAll()
                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> {
@@ -84,6 +90,15 @@ public class SecurityConfig {
             Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
                     .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_USER)));
 
+            Role wikiContributorRole = roleRepository.findByRoleName(AppRole.ROLE_WIKI_CONTRIBUTOR)
+                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_WIKI_CONTRIBUTOR)));
+
+            Role supportRole = roleRepository.findByRoleName(AppRole.ROLE_SUPPORT)
+                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_SUPPORT)));
+
+            Role moderatorRole = roleRepository.findByRoleName(AppRole.ROLE_MODERATOR)
+                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_MODERATOR)));
+
             Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
                     .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_ADMIN)));
 
@@ -114,6 +129,7 @@ public class SecurityConfig {
                 admin.setTwoFactorEnabled(false);
                 admin.setSignUpMethod("email");
                 admin.setRole(adminRole);
+                admin.setStaff(true);
                 userRepository.save(admin);
             }
 
@@ -129,6 +145,7 @@ public class SecurityConfig {
                 admin.setTwoFactorEnabled(false);
                 admin.setSignUpMethod("email");
                 admin.setRole(adminRole);
+                admin.setStaff(true);
                 userRepository.save(admin);
             }
         };
